@@ -198,5 +198,5 @@ async def on_ready():
     except Exception as e:
         print(f"خطأ في المزامنة: {e}")
 
-bot.run("MTUzMTE4Mzk3NDQ1MJI5NzgzMg.GULyr8.OsbuKrRMOsbJMcNm64B1sgyR7LKaPQs4Ry8oiY")
+bot.run('MTUzMTE4Mzk3NDQ1MjI5NzgzMg.G6ZdZc.vCKTrsjJWU94KSOWXXxw0QRrfnR15i8vcEfWSw')
 
