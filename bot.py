@@ -1,3 +1,4 @@
+import os
 import discord
 from discord.ext import commands
 
@@ -7,7 +8,6 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# --- كلاسات الأزرار والتذاكر ---
 class TicketPanelView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -32,9 +32,6 @@ class CloseTicketView(discord.ui.View):
     async def close_ticket(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message("جاري إغلاق التذكرة...", ephemeral=True)
 
-LOGO_IMAGE = ""
-BANNER_IMAGE = ""
-
 @bot.event
 async def on_ready():
     print(f"تم تسجيل الدخول باسم {bot.user}")
@@ -42,14 +39,12 @@ async def on_ready():
     bot.add_view(VerifyPanelView())
     bot.add_view(CloseTicketView())
     try:
-        GUILD_ID = 123456789012345678  # آيدي السيرفر
+        GUILD_ID = 123456789012345678
         guild = discord.Object(id=GUILD_ID)
         bot.tree.copy_global_to(guild=guild)
         synced = await bot.tree.sync(guild=guild)
-        print(f"تم تحديث ومزامنة {len(synced)} أمر لسيرفرك فوراً")
+        print(f"تم تحديث ومزامنة {len(synced)} أمر لسيرفرك")
     except Exception as e:
         print(f"خطأ في المزامنة: {e}")
 
-import os
 bot.run(os.environ.get('TOKEN'))
-
