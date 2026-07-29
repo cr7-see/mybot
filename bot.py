@@ -199,4 +199,6 @@ async def on_ready():
         print(f"تم تحديث ومزامنة {len(synced)} أمر لسيرفرك فوراً!")
     except Exception as e:
         print(f"خطأ في المزامنة: {e}")
-bot.run('MTUzMTE4Mzk3NDQ1MjI5NzgzMg.GAcsvE.hK3nQFqEFuaW8UisurNKriJxIPIGCI2AAAVtrg')
+bot.run('MTUzMTE4Mzk3NDMzNzNzMg.GqGD80.wS8qpffGMEGVxDcOv9Rw99H29S3ips1ZlqwpI')
+
+
