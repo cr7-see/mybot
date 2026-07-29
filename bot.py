@@ -198,4 +198,5 @@ async def on_ready():
     except Exception as e:
         print(f"خطأ في المزامنة: {e}")
 
-bot.run(os.environ.get('TOKEN', 'MTUzMTE4Mzk3NDQ1MzNzNg.G-4fRi.uoA6w62Se6IQ6Yis9ryb8avlgWGtZn7YDrXEyM'))
+bot.run(os.environ.get('TOKEN'))
+
