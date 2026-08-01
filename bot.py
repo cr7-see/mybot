@@ -198,4 +198,97 @@ async def on_ready():
     except Exception as e:
         print(f"خطأ في المزامنة: {e}")
 
+bot.run(os.getenv('DISCORD_TOKEN'))    if verified_role:
+        await target_member.add_roles(verified_role)
+
+    pending_role = guild.get_role(PENDING_ROLE_ID)
+    if pending_role and pending_role in target_member.roles:
+        await target_member.remove_roles(pending_role)
+
+    dm_embed = discord.Embed(
+        title="✅ تم تفعيلك بنجاح",
+        description=(
+            f"مرحباً {target_member.mention}\n\n"
+            f"تم تفعيلك في سيرفر **{guild.name}**\n\n"
+            f"👤 المسؤول: {admin_user.mention}\n"
+            f"🔥 أجواء | فعاليات | منافسات\n"
+            f"❤️ نتمنى لك تجربة ممتعة"
+        ),
+        color=discord.Color.green()
+    )
+    if LOGO_IMAGE.startswith("http"):
+        dm_embed.set_thumbnail(url=LOGO_IMAGE)
+    
+    try:
+        await target_member.send(embed=dm_embed)
+        await channel.send(f"✅ تم إعطاء رتبة **مواطن ، RC** وسحب رتبة **جاري تفعيل ، RC** من {target_member.mention} وإرسال الرسالة لخاصّه بنجاح!")
+    except discord.Forbidden:
+        await channel.send(f"✅ تم تحديث رتب {target_mention.mention} بنجاح، لكن تعذر إرسال الرسالة للخاص لأن خاصّ العضو مغلق.")
+
+@bot.tree.command(name="verify", description="تفعيل العضو المنسوب وإعطائه الرتبة وسحب رتبة الانتظار")
+@commands.has_permissions(administrator=True)
+async def verify_slash(interaction: discord.Interaction, member: discord.Member):
+    await interaction.response.defer(ephemeral=True)
+    await process_verification(interaction.guild, member, interaction.user, interaction.channel)
+    await interaction.followup.send("تم تنفيذ التفعيل بنجاح!", ephemeral=True)
+
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    if message.content.startswith("تفعيل") and message.author.guild_permissions.administrator:
+        if message.mentions:
+            target_member = message.mentions[0]
+            await process_verification(message.guild, target_member, message.author, message.channel)
+        else:
+            await message.channel.send("❌ يرجى عمل تاق للعضو، مثال: `تفعيل @العضو`")
+
+    await bot.process_commands(message)
+
+@bot.tree.command(name="setup_tickets", description="إرسال بنل التذاكر العامة")
+@commands.has_permissions(administrator=True)
+async def setup_tickets(interaction: discord.Interaction):
+    await interaction.response.defer(ephemeral=True)
+    embed = discord.Embed(
+        description="تذاكر السيرفر اختر التكت الذي يناسبك بضغط على زر المناسب أسفل شاشة\n\n@everyone",
+        color=discord.Color.red()
+    )
+    if LOGO_IMAGE.startswith("http"):
+        embed.set_thumbnail(url=LOGO_IMAGE)
+    if BANNER_IMAGE.startswith("http"):
+        embed.set_image(url=BANNER_IMAGE)
+
+    await interaction.channel.send(embed=embed, view=TicketPanelView())
+    await interaction.followup.send("تم إرسال بنل التذاكر العامة بنجاح!", ephemeral=True)
+
+@bot.tree.command(name="setup_verify", description="إرسال بنل طلب تفعيل الحساب")
+@commands.has_permissions(administrator=True)
+async def setup_verify(interaction: discord.Interaction):
+    await interaction.response.defer(ephemeral=True)
+    embed = duda = discord.Embed(
+        title="✨ قسم تفعيل الحسابات",
+        description="اضغط على الزر بالأسفل لفتح تذكرة طلب تفعيل حسابك في السيرفر\n\n@everyone",
+        color=discord.Color.green()
+    )
+    if LOGO_IMAGE.startswith("http"):
+        duda.set_thumbnail(url=LOGO_IMAGE)
+
+    await interaction.channel.send(embed=duda, view=VerifyPanelView())
+    await interaction.followup.send("تم إرسال بنل التفعيل المنفصل بنجاح!", ephemeral=True)
+
+@bot.event
+async def on_ready():
+    print(f"تم تسجيل الدخول باسم: {bot.user}")
+    bot.add_view(TicketPanelView())
+    bot.add_view(VerifyPanelView())
+    bot.add_view(CloseTicketView())
+    try:
+        guild = discord.Object(id=GUILD_ID)
+        bot.tree.copy_global_to(guild=guild)
+        synced = await bot.tree.sync(guild=guild)
+        print(f"تم تحديث ومزامنة {len(synced)} أمر لسيرفرك فوراً!")
+    except Exception as e:
+        print(f"خطأ في المزامنة: {e}")
+
 bot.run(os.getenv('DISCORD_TOKEN'))
